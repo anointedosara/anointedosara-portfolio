@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { SITE, sections } from '@/lib/data';
 import { scrollToId } from '@/lib/scroll';
+import Logo from './Logo';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -139,13 +140,22 @@ export default function Navbar() {
               e.preventDefault();
               scrollToId('top');
             }}
-            className="tap group shrink-0 font-display text-base font-bold tracking-tight tb:text-lg"
+            aria-label={`${SITE.short} — back to top`}
+            className="tap group shrink-0 gap-[clamp(9px,1.1vw,13px)] text-bone"
           >
-            <span className="text-bone">Anointed</span>
-            <span className="text-accent">.</span>
-            <span className="hidden text-muted transition-colors group-hover:text-bone xs:inline">
-              {' '}
-              Osara
+            <Logo className="h-[21px] w-auto tb:h-[24px] lg:h-[26px]" />
+
+            {/* The name only earns its space once there is some: below 400px
+                the mark carries the brand on its own. */}
+            <span aria-hidden className="hidden h-5 w-px bg-line xs:block" />
+            <span
+              aria-hidden
+              className="hidden font-display text-[0.97rem] font-bold leading-none tracking-[-0.02em] xs:block tb:text-[1.05rem]"
+            >
+              Anointed{' '}
+              <span className="font-semibold text-muted transition-colors duration-300 group-hover:text-bone">
+                Osara
+              </span>
             </span>
           </a>
 

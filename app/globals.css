@@ -138,6 +138,20 @@
     @apply h-px w-full bg-line;
   }
 
+  /* The accent bar in the monogram is the mark's one moving part: it lifts
+     from its own centre when the brand link is hovered or focused.
+     `transform-box: fill-box` is what makes `center` mean the bar's own
+     middle rather than the whole SVG's origin. */
+  .logo-i {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 450ms theme('transitionTimingFunction.out');
+  }
+  .group:hover .logo-i,
+  .group:focus-visible .logo-i {
+    transform: scaleY(1.14);
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;

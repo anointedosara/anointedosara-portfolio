@@ -2,6 +2,7 @@
 
 import { SITE } from '@/lib/data';
 import { scrollToId } from '@/lib/scroll';
+import Logo from './Logo';
 
 export default function Footer() {
   return (
@@ -11,7 +12,8 @@ export default function Footer() {
     >
       <div className="shell flex flex-col gap-[clamp(16px,2.5vw,28px)] pt-[clamp(24px,4vw,44px)] tb:flex-row tb:items-center tb:justify-between">
         <div>
-          <p className="font-display text-[clamp(1.05rem,3vw,1.4rem)] font-bold text-bone">
+          <Logo className="h-[clamp(24px,3.4vw,30px)] w-auto text-bone" />
+          <p className="mt-[clamp(11px,1.6vw,18px)] font-display text-[clamp(1.05rem,3vw,1.4rem)] font-bold text-bone">
             {SITE.name}
             <span className="text-accent">.</span>
           </p>
