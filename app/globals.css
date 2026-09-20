@@ -161,10 +161,9 @@
   }
 
   /* Project panel density.
-     While the panels simply stack, they size against width like everything
-     else. Inside the pinned rail they live on a stage of fixed height, so the
-     whole scale switches to viewport height — otherwise a short laptop window
-     (1280x650 after browser chrome) pushes links and tags out of the frame. */
+     The rail runs at every width now, so these are the fallback values: what
+     a reduced-motion visitor gets, where the panels simply stack and size
+     against width like everything else on the page. */
   .panel {
     --p-pad: clamp(32px, 6vw, 72px);
     --p-title: clamp(2.5rem, 8.5vw, 6rem);
@@ -175,24 +174,73 @@
     --p-shot: none;
   }
 
-  /* Two columns, but not yet the wide rail: the text column is narrow here. */
+  /* Two columns, but stacked rather than railed: the text column is narrow. */
   @media (min-width: 1024px) and (max-width: 1279.98px) {
     .panel {
       --p-title: clamp(1.9rem, 4.2vw, 3rem);
     }
   }
 
-  @media (min-width: 1280px) {
+  /* Inside the rail every panel is a stage of fixed height, so the whole
+     scale switches to viewport height — otherwise the content pushes links
+     and tags out of the frame. `svh` and not `vh`, because the stage itself
+     is 100svh: measuring the content against the larger viewport would
+     overflow the stage by exactly the height of a mobile URL bar. */
+  @media (prefers-reduced-motion: no-preference) {
     .panel {
-      --p-pad: clamp(24px, 5vh, 72px);
-      --p-title: clamp(2.1rem, 7.4vh, 5.5rem);
-      --p-index: clamp(1.8rem, 5.8vh, 4.5rem);
-      --p-lead: clamp(0.95rem, 2vh, 1.3rem);
-      --p-detail: clamp(0.78rem, 1.55vh, 0.95rem);
-      --p-gap: clamp(9px, 1.8vh, 24px);
-      --p-shot: clamp(220px, 64vh, 740px);
+      --p-pad: clamp(18px, 3.4svh, 72px);
+      --p-title: clamp(1.5rem, 5svh, 5.5rem);
+      --p-index: clamp(1.4rem, 4.4svh, 4.5rem);
+      --p-lead: clamp(0.875rem, 1.75svh, 1.3rem);
+      --p-detail: clamp(0.72rem, 1.4svh, 0.95rem);
+      --p-gap: clamp(6px, 1.15svh, 24px);
+      /* One column: the capture shares the stage with the text. */
+      --p-shot: clamp(140px, 30svh, 420px);
+    }
+  }
+
+  /* Two columns — the capture sits beside the text, so it can take the whole
+     stage instead of a third of it. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    .panel {
+      --p-shot: clamp(220px, 64svh, 740px);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1280px) {
+    .panel {
+      --p-pad: clamp(24px, 5svh, 72px);
+      --p-title: clamp(2.1rem, 7.4svh, 5.5rem);
+      --p-index: clamp(1.8rem, 5.8svh, 4.5rem);
+      --p-lead: clamp(0.95rem, 2svh, 1.3rem);
+      --p-detail: clamp(0.78rem, 1.55svh, 0.95rem);
+      --p-gap: clamp(9px, 1.8svh, 24px);
+    }
+  }
+
+  /* A landscape phone is a short, wide stage with no room to stack: the
+     capture moves beside the text well before the 1024px the taller
+     breakpoints use. */
+  @media (prefers-reduced-motion: no-preference) and (max-height: 600px) and (min-width: 480px) {
+    .p-grid {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      align-items: center;
     }
 
+    .panel {
+      --p-shot: clamp(110px, 58svh, 420px);
+    }
+  }
+
+  /* Shorter still — a small phone turned sideways is about 320px of stage.
+     The type ramp bottoms out here; without this the longest title on the
+     narrowest column ("REST Countries Explorer") runs past the frame. */
+  @media (prefers-reduced-motion: no-preference) and (max-height: 430px) {
+    .panel {
+      --p-title: clamp(1.1rem, 3.6svh, 2rem);
+      --p-lead: clamp(0.78rem, 1.5svh, 1rem);
+      --p-shot: clamp(90px, 46svh, 300px);
+    }
   }
 }
 
@@ -343,5 +391,26 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-role {
     --p: 1;
+  }
+}
+
+/* A small phone turned sideways leaves about 320px of stage — too little for
+   the secondary detail once the capture and the actions have their room. It
+   goes there, in the utilities layer so it outranks the `flex` on the stack
+   list; the full stack and index stay a tap away in the card's modal. */
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) and (max-height: 430px) {
+    .p-secondary {
+      display: none;
+    }
+
+    /* The summary is the one part that grows without bound on a narrow
+       column, so it is the one part that gets cut. The modal has it in full. */
+    .p-summary {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
   }
 }

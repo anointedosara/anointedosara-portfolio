@@ -299,7 +299,7 @@ export const SITE = {
   ],
   socials: [
     { label: 'GitHub', href: 'https://github.com/anointedosara' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/anointed-osara-34313b23a' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/anointed-osara' },
     { label: 'X', href: 'https://x.com/lil_ted_03' },
   ],
 };

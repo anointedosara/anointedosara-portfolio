@@ -27,14 +27,15 @@ function Card({ project, onOpen }: { project: Project; onOpen: (p: Project) => v
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <div
         onClick={handleCard}
-        className="shell flex h-full w-full flex-col justify-center py-[var(--p-pad)] xl:pb-[calc(var(--p-pad)+26px)]"
+        className="shell flex h-full w-full flex-col justify-center py-[var(--p-pad)] motion-safe:pb-[calc(var(--p-pad)+26px)]"
       >
-        <div className="grid items-center gap-[clamp(20px,3.5vw,56px)] lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <div className="p-grid grid items-center gap-[clamp(20px,3.5vw,56px)] lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           {/* The full captured screen — contained, never cropped, so the panel
-              colour frames it rather than slicing it. */}
+              colour frames it rather than slicing it. Inside the rail it is
+              measured against the stage height rather than its own ratio. */}
           <figure
             data-parallax
-            className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius)] xl:aspect-auto xl:h-[var(--p-shot)]"
+            className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius)] motion-safe:aspect-auto motion-safe:h-[var(--p-shot)]"
           >
             <Image
               src={project.image}
@@ -63,13 +64,13 @@ function Card({ project, onOpen }: { project: Project; onOpen: (p: Project) => v
               </button>
             </div>
 
-            <p className="mt-[var(--p-gap)] max-w-measure text-[length:var(--p-lead)] leading-snug text-bone/75">
+            <p className="p-summary mt-[var(--p-gap)] max-w-measure text-[length:var(--p-lead)] leading-snug text-bone/75">
               {project.summary}
             </p>
 
-            <hr className="mt-[var(--p-gap)] border-0 border-t border-bone/15" />
+            <hr className="p-secondary mt-[var(--p-gap)] border-0 border-t border-bone/15" />
 
-            <ul className="mt-[var(--p-gap)] flex flex-wrap gap-x-4 gap-y-1.5">
+            <ul className="p-secondary mt-[var(--p-gap)] flex flex-wrap gap-x-4 gap-y-1.5">
               {project.stack.map((tech) => (
                 <li key={tech} className="text-[length:var(--p-detail)] text-bone/55">
                   {tech}
@@ -77,7 +78,10 @@ function Card({ project, onOpen }: { project: Project; onOpen: (p: Project) => v
               ))}
             </ul>
 
-            <p className="mt-[var(--p-gap)] t-label" style={{ color: project.accent }}>
+            <p
+              className="p-secondary mt-[var(--p-gap)] t-label"
+              style={{ color: project.accent }}
+            >
               {project.index} — {project.kind}
             </p>
 
@@ -137,8 +141,10 @@ export default function Projects() {
       ctx = gsap.context(() => {
         const mm = gsap.matchMedia();
 
-        /* Wide desktop only: the sequence plays sideways under a pin. */
-        mm.add('(min-width: 1280px) and (prefers-reduced-motion: no-preference)', () => {
+        /* Every width: the sequence plays sideways under a pin. The only
+           opt-out is a reduced-motion preference, which the panel CSS mirrors
+           so the markup falls back to a plain stack. */
+        mm.add('(prefers-reduced-motion: no-preference)', () => {
           // Measured from the wrapper, not `100vw`: the viewport unit includes
           // the scrollbar, which would leave every panel a few px wider than
           // the space it has and push the last one out of alignment.
@@ -197,9 +203,8 @@ export default function Projects() {
           });
         });
 
-        /* Below xl — every tablet and phone — and for anyone asking for less
-           motion, the same markup simply stacks and scrolls: no pin, no
-           horizontal travel, nothing pinned to fight a thumb. */
+        /* For anyone asking for less motion, the same markup simply stacks
+           and scrolls: no pin, no horizontal travel. */
       }, wrap);
 
       // Screenshots finishing late would otherwise leave the pin mis-measured.
@@ -247,15 +252,15 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* The journey. One set of markup: a horizontal rail once there is room
-          for it, an ordinary vertical sequence when there is not. */}
-      <div ref={pin} className="relative xl:h-[100svh] xl:overflow-hidden">
+      {/* The journey. One set of markup: a horizontal rail at every width, an
+          ordinary vertical sequence for anyone who asked for less motion. */}
+      <div ref={pin} className="relative motion-safe:h-[100svh] motion-safe:overflow-hidden">
         <div
           ref={track}
-          className="flex flex-col xl:h-full xl:flex-row xl:flex-nowrap xl:will-change-transform"
+          className="flex flex-col motion-safe:h-full motion-safe:flex-row motion-safe:flex-nowrap motion-safe:will-change-transform"
         >
           {projects.map((project) => (
-            <div key={project.slug} className="w-full shrink-0 xl:h-full">
+            <div key={project.slug} className="w-full shrink-0 motion-safe:h-full">
               <Card project={project} onOpen={onOpen} />
             </div>
           ))}
@@ -264,7 +269,7 @@ export default function Projects() {
         {/* Progress rail — only meaningful while the sequence runs sideways. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 hidden items-center gap-4 px-gutter pb-5 xl:flex"
+          className="pointer-events-none absolute inset-x-0 bottom-0 hidden items-center gap-4 px-gutter pb-5 motion-safe:flex"
         >
           <span className="font-mono text-[0.7rem] text-bone">
             <span ref={counter}>01</span>

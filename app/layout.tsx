@@ -36,6 +36,20 @@ export const metadata: Metadata = {
   description: SITE.intro,
   keywords: ['Frontend Developer', 'React', 'Next.js', 'TypeScript', 'Anointed Osara'],
   authors: [{ name: SITE.name }],
+  /* Every icon is a crop of the AIO monogram (components/Logo.tsx).
+     They live in /public and are declared here rather than relying on the
+     app/ file convention: binary metadata files fail to build on this setup,
+     and declaring `icons` at all replaces the auto-detected set anyway, so
+     listing them explicitly keeps the three in one place.
+     SVG first for browsers that take it; .ico for the rest and for the
+     request browsers make on their own; PNG for iOS, which ignores SVG. */
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: `${SITE.short} — ${SITE.role}`,
     description: SITE.intro,
