@@ -14,22 +14,39 @@ export default function Navbar() {
   const panel = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
 
-  /* Bar hides as you scroll down, returns the moment you scroll up. */
+  /* Bar hides as you scroll down, returns the moment you scroll up.
+     The decision is made on distance travelled since the last change of
+     direction, not on one frame's delta: native touch momentum arrives in
+     irregular steps, and plenty of those frames move only a pixel or two.
+     Judged frame by frame, every one of them reads as "stopped" and slides
+     the bar back in halfway down the page. */
   useEffect(() => {
     let last = window.scrollY;
+    let run = 0; // signed distance travelled since the direction last flipped
     let raf = 0;
 
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
-        const y = window.scrollY;
+        const y = Math.max(0, window.scrollY);
+        const delta = y - last;
+        last = y;
+        raf = 0;
+
         setSolid(y > 24);
-        setHidden(y > 320 && y > last + 4);
         // Back at the hero, nothing is current — otherwise the last section
         // the observer saw stays marked while the reader looks at the top.
         if (y < 240) setActive('');
-        last = y;
-        raf = 0;
+
+        if (delta === 0) return;
+        if (delta > 0 !== run > 0) run = 0;
+        run += delta;
+
+        // Near the top the bar is always present; past that it takes a
+        // deliberate run — not a stray frame — to move it either way.
+        if (y <= 320) setHidden(false);
+        else if (run > 12) setHidden(true);
+        else if (run < -12) setHidden(false);
       });
     };
 
