@@ -137,9 +137,13 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Above the sheet, not below it: the bar is a positioned, z-indexed
+          element, so it opens a stacking context and the toggle's own z-index
+          is resolved inside it. Leave the bar under the sheet and the close
+          button goes under it too, however high its z-index climbs. */}
       <header
         className={[
-          'fixed inset-x-0 top-0 z-[120] transition-[transform,background-color,backdrop-filter,border-color] duration-500 ease-out',
+          'fixed inset-x-0 top-0 z-[130] transition-[transform,background-color,backdrop-filter,border-color] duration-500 ease-out',
           hidden && !open ? '-translate-y-full' : 'translate-y-0',
           solid && !open
             ? 'border-b border-line/80 bg-ink/70 backdrop-blur-xl'
@@ -155,7 +159,9 @@ export default function Navbar() {
             href="#top"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId('top');
+              // Reachable over an open sheet now, so it closes it first —
+              // the sheet holds the scroll lock that would swallow the jump.
+              go('top');
             }}
             aria-label={`${SITE.short} — back to top`}
             className="tap group shrink-0 gap-[clamp(9px,1.1vw,13px)] text-bone"
